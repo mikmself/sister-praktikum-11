@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Application System - Real-time Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#64748b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Student Application System</h1>
+                    <p class="text-gray-600 mt-1">Submit your application and track status in real-time</p>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="flex flex-wrap gap-3">
+                    <a href="/consumer" class="px-4 py-2 text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition-colors font-medium">
+                        Pending
+                    </a>
+                    <a href="/mahasiswa-diterima" class="px-4 py-2 text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors font-medium">
+                        Accepted
+                    </a>
+                    <a href="/mahasiswa-ditolak" class="px-4 py-2 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium">
+                        Rejected
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Application Form -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200 bg-blue-50">
+                    <h2 class="text-lg font-semibold text-blue-800">Submit New Application</h2>
+                </div>
+                
+                <div class="p-6">
+                    <form id="mahasiswa-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="nim" class="block text-sm font-semibold text-gray-700 mb-2">Student ID</label>
+                                <input type="text" id="nim" name="nim" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    placeholder="Enter your student ID">
+                            </div>
+                            
+                            <div>
+                                <label for="nama" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                <input type="text" id="nama" name="nama" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    placeholder="Enter your full name">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                            <input type="email" id="email" name="email" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Enter your email address">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="notelpon" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" id="notelpon" name="notelpon" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    placeholder="Enter your phone number">
+                            </div>
+                            
+                            <div>
+                                <label for="prodi" class="block text-sm font-semibold text-gray-700 mb-2">Study Program</label>
+                                <select id="prodi" name="prodi" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                    <option value="">Select a program</option>
+                                    <option value="Teknik Informatika">Computer Science</option>
+                                    <option value="Sistem Informasi">Information Systems</option>
+                                    <option value="Manajemen Informatika">Information Management</option>
+                                    <option value="Teknik Komputer">Computer Engineering</option>
+                                    <option value="Data Science">Data Science</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pt-4">
+                            <button type="submit" id="submit-btn"
+                                class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span id="submit-text">Submit Application</span>
+                                <span id="submit-loading" class="hidden">Submitting...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Information Panel -->
+            <div class="space-y-6">
+                <!-- System Status -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
+                        <h3 class="text-lg font-semibold text-green-800">System Status</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium text-gray-700">Real-time processing active</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-2">Your application will be processed immediately and you can track the status in real-time.</p>
+                    </div>
+                </div>
+
+                <!-- Process Info -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">Application Process</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Submit Application</p>
+                                    <p class="text-sm text-gray-600">Fill out the form and submit your application</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Under Review</p>
+                                    <p class="text-sm text-gray-600">Your application is being reviewed by admissions</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Decision Made</p>
+                                    <p class="text-sm text-gray-600">You will receive acceptance or rejection notification</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">Today's Statistics</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-2xl font-bold text-blue-600" id="pending-count">0</p>
+                                <p class="text-xs text-gray-600">Pending</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-green-600" id="accepted-count">0</p>
+                                <p class="text-xs text-gray-600">Accepted</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-red-600" id="rejected-count">0</p>
+                                <p class="text-xs text-gray-600">Rejected</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300 max-w-sm">
+        <div class="flex items-center">
+            <div id="toast-icon" class="flex-shrink-0 w-5 h-5 text-green-500">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <p id="toast-message" class="ml-3 text-sm font-medium text-gray-900">Application submitted successfully</p>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById("mahasiswa-form");
+        const submitBtn = document.getElementById("submit-btn");
+        const submitText = document.getElementById("submit-text");
+        const submitLoading = document.getElementById("submit-loading");
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toast-message");
+        const toastIcon = document.getElementById("toast-icon");
+        const pendingCount = document.getElementById("pending-count");
+        const acceptedCount = document.getElementById("accepted-count");
+        const rejectedCount = document.getElementById("rejected-count");
+
+        let stats = { pending: 0, accepted: 0, rejected: 0 };
+
+        // Update statistics
+        function updateStats() {
+            pendingCount.textContent = stats.pending;
+            acceptedCount.textContent = stats.accepted;
+            rejectedCount.textContent = stats.rejected;
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            
+            if (type === 'success') {
+                toastIcon.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                toastIcon.className = 'flex-shrink-0 w-5 h-5 text-green-500';
+            } else {
+                toastIcon.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                toastIcon.className = 'flex-shrink-0 w-5 h-5 text-red-500';
+            }
+            
+            toast.classList.remove('translate-x-full');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // Listen for new applications
+        socket.on("new-mahasiswa", (mhs) => {
+            stats.pending++;
+            updateStats();
+        });
+
+        // Listen for status updates
+        socket.on("status-update", (update) => {
+            stats.pending = Math.max(0, stats.pending - 1);
+            if (update.status === 'diterima') {
+                stats.accepted++;
+            } else if (update.status === 'ditolak') {
+                stats.rejected++;
+            }
+            updateStats();
+        });
+
+        // Form submission
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitText.classList.add('hidden');
+            submitLoading.classList.remove('hidden');
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch("/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast("Application submitted successfully! You can track status in real-time.");
+                    form.reset();
+                } else {
+                    showToast(result.message || "Failed to submit application", 'error');
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("Error submitting application. Please try again.", 'error');
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitText.classList.remove('hidden');
+                submitLoading.classList.add('hidden');
+            }
+        });
+
+        // Initialize stats
+        updateStats();
+    </script>
+</body>
+</html> 
